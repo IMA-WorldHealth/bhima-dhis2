@@ -4,7 +4,7 @@ BHIMA-DHIS2 allows you to execute the data import script from BHIMA to DHIS2. Cu
 
 ## Prerequisites
 
-First, you need to have a version of BHIMA running on your PC.
+First, you need to have a version of [BHIMA](https://github.com/IMA-WorldHealth/bhima) running on your PC.
 
 ## Configuration
 
