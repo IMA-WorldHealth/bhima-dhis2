@@ -6,6 +6,7 @@ const axios = require('axios');
 const moment = require('moment');
 const fs = require('fs');
 const xlsx = require('xlsx');
+const logUpdate = require('log-update');
 
 const rumer = require(`${process.env.PATH_RUMER_FUNCTION}`);
 const db = require(`${process.env.PATH_DB}`);
@@ -13,6 +14,9 @@ const db = require(`${process.env.PATH_DB}`);
 const DHIS2_SERVER_URL = process.env.DHIS2_SERVER_URL;
 const DHIS2_USERNAME = process.env.DHIS2_USERNAME;
 const DHIS2_PASSWORD =  process.env.DHIS2_PASSWORD;
+
+const frames = ['-', '\\', '|', '/'];
+let index = 0;
 
 async function formatData(startDate, endDate, depot) {
   try {
@@ -184,13 +188,20 @@ async function importToDhis2(data) {
  */
 async function main() {
   const sql = `SELECT * FROM depot WHERE dhis2_uid IS NOT NULL;`;
-  console.log('please wait');
+  const log = logUpdate.createLogUpdate(process.stdout);
+
+  setInterval(() => {
+    const frame = frames[(index = ++index % frames.length)];
+    log(`${frame} please wait`);
+  }, 80);
+  log.done('Data import in progress...');
   try {
     const depots = await db.exec(sql);
     const startDate = process.env.START_DATE;
     const endDate = process.env.END_DATE;
     const data = await formatData(startDate, endDate, depots);
     await importToDhis2(data);
+    log.clear();
     process.exit(0);
   } catch (error) {
     console.log(error);
